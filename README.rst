@@ -1,4 +1,5 @@
-# nike-py-sdk
+nike-py-sdk
+===========
 
 WIP
 
