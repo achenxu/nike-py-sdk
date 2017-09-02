@@ -3,6 +3,15 @@ nike-py-sdk
 
 This is an *unofficial* Python3 API wrapper for Nike services. WIP.
 
+Installation
+------------
+
+You can install this package with ``pip``:
+
+::
+
+    $ pip install nikepysdk
+
 Basic Usage
 -----------
 
