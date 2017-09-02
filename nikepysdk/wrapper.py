@@ -59,7 +59,7 @@ class NikeSdk(object):
         verified = 'verifiedphone' in response.json()
         return verified
 
-    def send_sms_code(self, phone_number, access_token):
+    def send_sms_code(self, access_token, phone_number):
         params = {
             'phone': phone_number,
             'country': 'US',
@@ -70,7 +70,7 @@ class NikeSdk(object):
         success = response.status_code == 202
         return success
 
-    def verify_sms_code(self, sms_code, access_token):
+    def verify_sms_code(self, access_token, sms_code):
         params = {
             'code': sms_code,
             'token': access_token
@@ -93,8 +93,8 @@ class NikeSdk(object):
                             'family': shipping_info['last_name']
                         }
                     },
-                    'line1': shipping_info['address1'],
-                    'line2': shipping_info['address2'],
+                    'line1': shipping_info['address_1'],
+                    'line2': shipping_info['address_2'],
                     'locality': shipping_info['city'],
                     'province': shipping_info['state'],
                     'code': shipping_info['zip'],
@@ -118,15 +118,18 @@ class NikeSdk(object):
     def add_card(self, access_token, card_info):
         card_id = str(uuid.uuid4())
         payload = {
-            'accountNumber': card_info['cc'],
-            'cardType': card_info['ccType'],
-            'expirationMonth': card_info['ccMonth'],
-            'expirationYear': card_info['ccYear'],
+            'accountNumber': card_info['number'],
+            'cardType': card_info['type'],
+            'expirationMonth': card_info['exp_month'],
+            'expirationYear': card_info['exp_year'],
             'creditCardInfoId': card_id,
             'cvNumber': card_info['ccv']
         }
         endpoint = 'https://paymentcc.nike.com/creditcardsubmit/{}/store'.format(card_id)
-        response = requests.post(endpoint, json=payload)
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token)
+        }
+        response = requests.post(endpoint, json=payload, headers=headers)
         success = response.status_code == 201
         return card_id if success else None
 
@@ -135,8 +138,8 @@ class NikeSdk(object):
             'currency': 'USD',
             'isDefault': True,
             'billingAddress': {
-                'address1': billing_info['address1'],
-                'address2': billing_info['address2'],
+                'address1': billing_info['address_1'],
+                'address2': billing_info['address_2'],
                 'city': billing_info['city'],
                 'country': 'US',
                 'firstName': billing_info['first_name'],
