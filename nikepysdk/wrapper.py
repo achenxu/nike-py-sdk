@@ -2,7 +2,7 @@ import requests
 import uuid
 import re
 import json
-from nikepysdk.event import NikeEvent
+from nikepysdk.event import NikeEvent, NikeSeries
 
 class NikeSdk(object):
     def __init__(self, proxies={}):
@@ -160,7 +160,8 @@ class NikeSdk(object):
         success = response.status_code == 201
         return success
 
-    def get_event_by_id(self, event_id):
+    @staticmethod
+    def get_event_by_id(event_id):
         endpoint = 'https://www.nike.com/events-registration/event?id={0}'.format(event_id)
         response = requests.get(endpoint)
         try:
@@ -168,4 +169,17 @@ class NikeSdk(object):
         except AttributeError:
             return None
         event = NikeEvent(event_data)
+        return event
+    
+    @staticmethod
+    def get_series_by_id(series_id):
+        endpoint = 'https://www.nike.com/events-registration/series?id={0}'.format(series_id)
+        response = requests.get(endpoint)
+        try:
+            series_data = json.loads(re.search('nike\.events\.content = (.*?) \|\| {}', response.text).group(1))
+        except AttributeError:
+            return None
+        if not series_data.get('multiPage', None):
+            return None
+        event = NikeSeries(series_data)
         return event

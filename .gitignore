@@ -1,5 +1,6 @@
 build/
 dist/
+tests/
 *.egg-info/
 *.egg
 *.py[cod]
@@ -7,5 +8,4 @@ dist/
 *.so
 *~
 .vscode/
-test.py
 README.md
